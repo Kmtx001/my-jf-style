@@ -1,0 +1,211 @@
+/* 关闭卡片悬停放大动画 */
+.layout-desktop .itemsContainer .card {
+    .cardBox {
+        transition: none !important;
+    }
+    &:hover .cardBox {
+        transform: scale(1) !important;
+    }
+}
+
+/* 核心：固定详情页封面容器（仅桌面端生效，因原元素带hide-mobile） */
+.detailImageContainer.hide-mobile {
+  position: fixed !important; /* 固定定位，不随滚动移动 */
+}
+
+
+
+
+/* 1. 彻底重置演职人员容器冗余样式 */
+#castCollapsible,
+#castContent,
+#castContent .emby-scroller,
+#castContent .scrollSlider {
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  width: 100% !important;
+}
+#castContent {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important; /* 演员项之间的间距 */
+  white-space: normal !important;
+  transform: none !important;
+}
+
+/* 2. 单个演员项：图片 + 文字总容器 横向排列 */
+#castContent .personCard {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important; /* 顶部对齐，避免图片被文字撑开 */
+  width: 100% !important;
+  background: rgba(0, 0, 0, 0.35) !important;
+  border-radius: 8px !important;
+  padding: 10px !important;
+  margin: 0 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+}
+
+/* 3. 图片容器：最大300x168+等比例缩放（核心修改区） */
+#castContent .personCard .cardScalable {
+  flex-shrink: 1 !important; /* 允许收缩（原0，改为1） */
+  flex-grow: 0 !important; /* 强制不自动放大 */
+  max-width: 300px !important; /* 最大宽度300px（原固定width） */
+  max-height: 168px !important; /* 最大高度168px（原固定height） */
+  aspect-ratio: 300/168 !important; /* 锁定16:9宽高比，保证等比例缩放 */
+  padding: 0 !important;
+  margin: 0 !important;
+}
+#castContent .personCard .cardPadder {
+  display: none !important; /* 清除冗余占位 */
+}
+/* 图片样式：继承容器尺寸+等比例填充 */
+#castContent .personCard .cardImageContainer {
+  width: 100% !important;
+  height: 100% !important; /* 继承cardScalable的自适应尺寸 */
+  display: block !important;
+  overflow: hidden !important;
+  border-radius: 6px !important;
+  background-size: cover !important;
+  background-position: center !important; /* 图片居中裁剪 */
+  position: relative !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+#castContent .personCard .cardImageContainer img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important; /* 图片填充容器，不拉伸变形 */
+  display: block !important;
+}
+
+/* 4. 文字总容器：名字+饰演 垂直排列（无修改） */
+#castContent .personCard .cardBox {
+  display: flex !important;
+  flex-direction: column !important; /* 内部竖排 */
+  flex: 1 !important; /* 占满剩余宽度，核心：挤压图片容器的关键 */
+  margin-left: 10px !important; /* 与图片间距10px */
+  padding: 0 !important;
+  height: auto !important; /* 文字高度不影响图片 */
+}
+/* 重置cardText容器样式 */
+#castContent .personCard .cardText {
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+/* 演员名字：仅一行高度 */
+#castContent .personCard .cardText-first {
+  color: #ffffff !important;
+  font-size: 1.2em !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important; /* 仅名字单行 */
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 1.3em !important;
+}
+/* 饰演内容：自动换行+显示全部字符（核心修改，原有保留） */
+#castContent .personCard .cardText-secondary {
+  color: #ffffff !important;
+  font-size: 1.05em !important;
+  /* 移除行数限制，允许自动换行显示全部内容 */
+  display: block !important; /* 取消-webkit-box限制，改为普通块级元素 */
+  /* 删掉 -webkit-line-clamp 和 -webkit-box-orient */
+  overflow: visible !important; /* 取消内容隐藏，显示全部字符 */
+  overflow-wrap: break-word !important; /* 按单词换行（中文按字） */
+  word-break: break-all !important; /* 强制换行（兼容长文本/英文） */
+  white-space: normal !important; /* 允许自动换行 */
+  /* 间距与对齐 */
+  margin: 5px 0 0 0 !important; /* 与名字拉开间距 */
+  padding: 0 !important;
+  text-align: left !important;
+  line-height: 1.4em !important; /* 行高适配多行 */
+  height: auto !important; /* 高度随内容自动变化 */
+  padding-left: 0em !important; /* 整体右缩进1em，所有行都右移 */
+  text-indent: -3.4em !important; /* 首行缩进2字符（中文规范） */
+}
+
+
+
+/* 5. 修复覆盖容器：不占空间（无修改） */
+#castContent .personCard .cardOverlayContainer {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  z-index: 10 !important;
+}
+#castContent .personCard .cardOverlayButton-br {
+  position: absolute !important;
+  bottom: 6px !important;
+  right: 6px !important;
+  margin: 0 !important;
+}
+
+/* ===================== 6. 标题处理（纯隐藏，不再替换） ===================== */
+#peopleHeader.sectionTitle {
+  display: none !important; /* 直接隐藏标题元素 */
+}
+
+
+/* 7. 隐藏冗余元素（无修改） */
+#castCollapsible .emby-scrollbuttons {
+  display: none !important;
+}
+
+
+
+/* 核心：搜索结果容器 - 取消横向滚动，开启自动换行 */
+.searchResultsContainer,
+.itemsContainer,
+.detailList[data-type="searchResult"] {
+  /* 取消横向滚动条 */
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  /* 开启Flex自动换行 */
+  flex-wrap: wrap !important;
+  /* 允许内容自动撑开 */
+  width: 100% !important;
+  max-width: 100% !important;
+  /* 移除默认的固定高度（避免内容被截断） */
+  height: auto !important;
+}
+
+/* 搜索结果子项 - 调整宽度，适配换行布局 */
+.searchResultsContainer .card,
+.itemsContainer .itemCard,
+.detailList[data-type="searchResult"] .detailListItem {
+  /* 设置子项的最小宽度（可根据需要调整） */
+  min-width: 180px !important;
+  /* 子项宽度自适应（可选：固定宽度改为 180px 即可） */
+  flex: 1 0 180px !important;
+  /* 增加间距，布局更美观 */
+  margin: 8px !important;
+  /* 取消强制单行显示 */
+  white-space: normal !important;
+}
+
+/* 兼容旧版Jellyfin的搜索结果样式 */
+#searchPage .itemsContainer {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  padding: 10px 0 !important;
+}
+
+/* 移除搜索结果的横向滚动指示器 */
+.scrollIndicator {
+  display: none !important;
+}
+
+.noBackdropTransparency .detailPageSecondaryContainer {
+    background-color: #10101000;
+}
