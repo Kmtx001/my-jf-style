@@ -209,3 +209,8 @@
 .noBackdropTransparency .detailPageSecondaryContainer {
     background-color: #10101000;
 }
+
+/*调整背景黑色遮罩透明度*/
+.backgroundContainer.withBackdrop {
+    background-color: rgb(0 0 0 / 50%) !important;
+}
